@@ -43,8 +43,8 @@ class EmployeeControllerTest {
     void shouldReturnPagedEmployees_whenValidRequest() {
         // Arrange
         List<EmployeeResponseDto> employees = Arrays.asList(
-            new EmployeeResponseDto(1L, "John", "Doe", 1L, "Grade 1", "Team Lead", "Director", LocalDate.now(), null),
-            new EmployeeResponseDto(2L, "Jane", "Smith", 2L, "Grade 2", "Team Lead", "Director", LocalDate.now(), null)
+                new EmployeeResponseDto(1L, "John", "Doe", 1L, "Grade 1", 2L, "Team Lead Name", 3L, "Director Name", LocalDate.now(), null),
+                new EmployeeResponseDto(2L, "Jane", "Smith", 2L, "Grade 2", 3L, "Team Lead Name", 4L, "Director Name", LocalDate.now(), null)
         );
         Page<EmployeeResponseDto> employeePage = new PageImpl<>(employees);
         when(employeeService.getAllEmployees(any(Pageable.class))).thenReturn(employeePage);
@@ -87,9 +87,26 @@ class EmployeeControllerTest {
 
     @Test
     void shouldReturnEmployee_whenEmployeeExists() {
-        // Arrange
+        // Arrange@Test
+        //    void shouldReturnPagedEmployees_whenValidRequest() {
+        //        // Arrange
+        //        List<EmployeeResponseDto> employees = Arrays.asList(
+        //            new EmployeeResponseDto(1L, "John", "Doe", 1L, "Grade 1", 2L, "Team Lead Name", 3L, "Director Name", LocalDate.now(), null),
+        //            new EmployeeResponseDto(2L, "Jane", "Smith", 2L, "Grade 2", 3L, "Team Lead Name", 4L, "Director Name", LocalDate.now(), null)
+        //        );
+        //        Page<EmployeeResponseDto> employeePage = new PageImpl<>(employees);
+        //        when(employeeService.getAllEmployees(any(Pageable.class))).thenReturn(employeePage);
+        //
+        //        // Act
+        //        ResponseEntity<Page<EmployeeResponseDto>> response = employeeController.getAllEmployees(0, 10, "id", "asc");
+        //
+        //        // Assert
+        //        assertEquals(HttpStatus.OK, response.getStatusCode());
+        //        assertEquals(employeePage, response.getBody());
+        //        verify(employeeService).getAllEmployees(any(Pageable.class));
+        //    }
         Long employeeId = 1L;
-        EmployeeResponseDto employee = new EmployeeResponseDto(employeeId, "John", "Doe", 1L, "Grade 1", "Team Lead", "Director", LocalDate.now(), null);
+        EmployeeResponseDto employee = new EmployeeResponseDto(1L, "John", "Doe", 1L, "Grade 1", 2L, "Team Lead Name", 3L, "Director Name", LocalDate.now().minusYears(1), null);
         when(employeeService.getEmployeeById(employeeId)).thenReturn(employee);
 
         // Act
@@ -119,7 +136,12 @@ class EmployeeControllerTest {
         CreateEmployeeDto createDto = new CreateEmployeeDto();
         createDto.setFirstName("John");
         createDto.setLastName("Doe");
-        EmployeeResponseDto createdEmployee = new EmployeeResponseDto(1L, "John", "Doe", 1L, "Grade 1", "Team Lead", "Director", LocalDate.now(), null);
+        createDto.setGradeId(1L);
+        createDto.setTeamLeadId(2L);
+        createDto.setDirectorId(3L);
+        createDto.setStartDate(LocalDate.now().minusYears(1));
+
+        EmployeeResponseDto createdEmployee = new EmployeeResponseDto(1L, "John", "Doe", 1L, "Grade 1", 2L, "Team Lead Name", 3L, "Director Name", LocalDate.now().minusYears(1), null);
         when(employeeService.createEmployee(any(CreateEmployeeDto.class))).thenReturn(createdEmployee);
 
         // Act
@@ -150,7 +172,9 @@ class EmployeeControllerTest {
         Long employeeId = 1L;
         UpdateEmployeeDto updateDto = new UpdateEmployeeDto();
         updateDto.setFirstName("John Updated");
-        EmployeeResponseDto updatedEmployee = new EmployeeResponseDto(employeeId, "John Updated", "Doe", 1L, "Grade 1", "Team Lead", "Director", LocalDate.now(), null);
+        updateDto.setTeamLeadId(4L);
+        updateDto.setDirectorId(5L);
+        EmployeeResponseDto updatedEmployee = new EmployeeResponseDto(employeeId, "John Updated", "Doe", 1L, "Grade 1", 4L, "New Team Lead", 5L, "New Director", LocalDate.now(), null);
         when(employeeService.updateEmployee(eq(employeeId), any(UpdateEmployeeDto.class))).thenReturn(updatedEmployee);
 
         // Act

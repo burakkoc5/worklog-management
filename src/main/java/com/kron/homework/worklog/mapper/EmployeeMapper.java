@@ -6,6 +6,7 @@ import com.kron.homework.worklog.dto.employee.EmployeeResponseDto;
 import com.kron.homework.worklog.model.Employee;
 import com.kron.homework.worklog.model.Grade;
 import com.kron.homework.worklog.repository.GradeRepository;
+import com.kron.homework.worklog.repository.EmployeeRepository;
 import org.springframework.stereotype.Component;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -14,9 +15,11 @@ import jakarta.persistence.EntityNotFoundException;
 public class EmployeeMapper {
 
     private final GradeRepository gradeRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public EmployeeMapper(GradeRepository gradeRepository) {
+    public EmployeeMapper(GradeRepository gradeRepository, EmployeeRepository employeeRepository) {
         this.gradeRepository = gradeRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public Employee toEntity(CreateEmployeeDto dto) {
@@ -35,8 +38,6 @@ public class EmployeeMapper {
     private void updateEntityFromDto(Employee employee, UpdateEmployeeDto dto) {
         if (dto.getFirstName() != null) employee.setFirstName(dto.getFirstName());
         if (dto.getLastName() != null) employee.setLastName(dto.getLastName());
-        if (dto.getTeamLead() != null) employee.setTeamLead(dto.getTeamLead());
-        if (dto.getDirector() != null) employee.setDirector(dto.getDirector());
         if (dto.getStartDate() != null) employee.setStartDate(dto.getStartDate());
         if (dto.getEndDate() != null) employee.setEndDate(dto.getEndDate());
 
@@ -45,12 +46,23 @@ public class EmployeeMapper {
                     .orElseThrow(() -> new EntityNotFoundException("Grade not found with id: " + dto.getGradeId()));
             employee.setGrade(grade);
         }
+
+        if (dto.getTeamLeadId() != null) {
+            Employee teamLead = employeeRepository.findById(dto.getTeamLeadId())
+                    .orElseThrow(() -> new EntityNotFoundException("Team Lead not found with id: " + dto.getTeamLeadId()));
+            employee.setTeamLead(teamLead);
+        }
+
+        if (dto.getDirectorId() != null) {
+            Employee director = employeeRepository.findById(dto.getDirectorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Director not found with id: " + dto.getDirectorId()));
+            employee.setDirector(director);
+        }
     }
+
     private void updateEntityFromDto(Employee employee, CreateEmployeeDto dto) {
         employee.setFirstName(dto.getFirstName());
         employee.setLastName(dto.getLastName());
-        employee.setTeamLead(dto.getTeamLead());
-        employee.setDirector(dto.getDirector());
         employee.setStartDate(dto.getStartDate());
         employee.setEndDate(dto.getEndDate());
         
@@ -59,6 +71,18 @@ public class EmployeeMapper {
                     .orElseThrow(() -> new EntityNotFoundException("Grade not found with id: " + dto.getGradeId()));
             employee.setGrade(grade);
         }
+
+        if (dto.getTeamLeadId() != null) {
+            Employee teamLead = employeeRepository.findById(dto.getTeamLeadId())
+                    .orElseThrow(() -> new EntityNotFoundException("Team Lead not found with id: " + dto.getTeamLeadId()));
+            employee.setTeamLead(teamLead);
+        }
+
+        if (dto.getDirectorId() != null) {
+            Employee director = employeeRepository.findById(dto.getDirectorId())
+                    .orElseThrow(() -> new EntityNotFoundException("Director not found with id: " + dto.getDirectorId()));
+            employee.setDirector(director);
+        }
     }
 
     public EmployeeResponseDto toResponseDto(Employee employee) {
@@ -66,14 +90,22 @@ public class EmployeeMapper {
         dto.setId(employee.getId());
         dto.setFirstName(employee.getFirstName());
         dto.setLastName(employee.getLastName());
-        dto.setTeamLead(employee.getTeamLead());
-        dto.setDirector(employee.getDirector());
         dto.setStartDate(employee.getStartDate());
         dto.setEndDate(employee.getEndDate());
         
         if (employee.getGrade() != null) {
             dto.setGradeId(employee.getGrade().getId());
             dto.setGradeName(employee.getGrade().getName());
+        }
+        
+        if (employee.getTeamLead() != null) {
+            dto.setTeamLeadId(employee.getTeamLead().getId());
+            dto.setTeamLeadName(employee.getTeamLead().getFirstName() + " " + employee.getTeamLead().getLastName());
+        }
+        
+        if (employee.getDirector() != null) {
+            dto.setDirectorId(employee.getDirector().getId());
+            dto.setDirectorName(employee.getDirector().getFirstName() + " " + employee.getDirector().getLastName());
         }
         
         return dto;

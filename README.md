@@ -175,9 +175,9 @@ Base URL: `/api/worklog-types`
 ## Data Transfer Objects (DTOs)
 
 ### Employee DTOs
-- **CreateEmployeeDto:** Contains fields for creating a new employee (firstName, lastName, gradeId, teamLead, director, startDate, endDate)
-- **UpdateEmployeeDto:** Contains fields for updating an existing employee (similar to CreateEmployeeDto, but all fields are optional)
-- **EmployeeResponseDto:** Contains fields returned in employee responses (id, firstName, lastName, gradeId, gradeName, teamLead, director, startDate, endDate)
+- **CreateEmployeeDto:** Contains fields for creating a new employee (firstName, lastName, gradeId, teamLeadId, directorId, startDate, endDate)
+- **UpdateEmployeeDto:** Contains fields for updating an existing employee (id, firstName, lastName, gradeId, teamLeadId, directorId, startDate, endDate)
+- **EmployeeResponseDto:** Contains fields returned in employee responses (id, firstName, lastName, gradeId, gradeName, teamLeadId, teamLeadName, directorId, directorName, startDate, endDate)
 
 ### Grade DTOs
 - **CreateGradeDto:** Contains fields for creating a new grade (name)

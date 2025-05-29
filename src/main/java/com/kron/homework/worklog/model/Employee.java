@@ -33,15 +33,13 @@ public class Employee {
     @JoinColumn(name = "grade_id", nullable = false)
     private Grade grade;
 
-    @NotBlank(message = "Team lead is required")
-    @Size(max = 100, message = "Team lead name must be less than 100 characters")
-    @Column(nullable = false)
-    private String teamLead;
+    @ManyToOne
+    @JoinColumn(name = "team_lead_id")
+    private Employee teamLead;
 
-    @NotBlank(message = "Director is required")
-    @Size(max = 100, message = "Director name must be less than 100 characters")
-    @Column(nullable = false)
-    private String director;
+    @ManyToOne
+    @JoinColumn(name = "director_id")
+    private Employee director;
 
     @NotNull(message = "Start date is required")
     @Past(message = "Start date must be in the past")

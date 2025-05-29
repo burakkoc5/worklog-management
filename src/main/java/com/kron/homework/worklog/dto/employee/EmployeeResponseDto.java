@@ -15,8 +15,10 @@ public class EmployeeResponseDto {
     private String lastName;
     private Long gradeId;
     private String gradeName;
-    private String teamLead;
-    private String director;
+    private Long teamLeadId;
+    private String teamLeadName;
+    private Long directorId;
+    private String directorName;
     private LocalDate startDate;
     private LocalDate endDate;
 }

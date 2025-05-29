@@ -23,11 +23,9 @@ public class UpdateEmployeeDto {
     @NotNull(message = "Grade is required")
     private Long gradeId;
 
-    @Size(max = 100, message = "Team lead name must be less than 100 characters")
-    private String teamLead;
+    private Long teamLeadId;
 
-    @Size(max = 100, message = "Director name must be less than 100 characters")
-    private String director;
+    private Long directorId;
 
     @Past(message = "Start date must be in the past")
     private LocalDate startDate;

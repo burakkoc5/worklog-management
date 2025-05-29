@@ -22,13 +22,9 @@ public class CreateEmployeeDto {
     @NotNull(message = "Grade ID is required")
     private Long gradeId;
 
-    @NotBlank(message = "Team lead is required")
-    @Size(max = 100, message = "Team lead name must be less than 100 characters")
-    private String teamLead;
+    private Long teamLeadId;
 
-    @NotBlank(message = "Director is required")
-    @Size(max = 100, message = "Director name must be less than 100 characters")
-    private String director;
+    private Long directorId;
 
     @NotNull(message = "Start date is required")
     @Past(message = "Start date must be in the past")
