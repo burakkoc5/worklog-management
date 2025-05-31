@@ -46,6 +46,7 @@ public class WorklogMapper {
         if (dto.getEffort() != null) {
             existingWorklog.setEffort(dto.getEffort());
         }
+
         return existingWorklog;
     }
 
@@ -72,6 +73,8 @@ public class WorklogMapper {
         dto.setWorklogTypeId(worklog.getWorklogType().getId());
         dto.setWorklogTypeName(worklog.getWorklogType().getName());
         dto.setEffort(worklog.getEffort());
+        dto.setCreatedAt(worklog.getCreatedAt());
+        dto.setUpdatedAt(worklog.getUpdatedAt());
         return dto;
     }
 }

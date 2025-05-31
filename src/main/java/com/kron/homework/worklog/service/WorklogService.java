@@ -82,4 +82,10 @@ public class WorklogService extends BaseService<Worklog, WorklogResponseDto> {
             throw new EntityNotFoundException("Worklog", id);
         }
     }
+
+    public Page<WorklogResponseDto> getWorklogsByEmployee(Long employeeId, Pageable pageable) {
+        log.debug("Fetching worklogs for employee id: {}", employeeId);
+        return worklogRepository.findByEmployeeId(employeeId, pageable)
+                .map(worklogMapper::toResponseDto);
+    }
 }

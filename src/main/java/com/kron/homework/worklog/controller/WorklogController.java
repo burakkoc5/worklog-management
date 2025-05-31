@@ -59,4 +59,18 @@ public class WorklogController {
         worklogService.deleteWorklog(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<Page<WorklogResponseDto>> getWorklogsByEmployee(
+            @PathVariable Long employeeId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+        
+        Sort.Direction direction = sortDirection.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        
+        return ResponseEntity.ok(worklogService.getWorklogsByEmployee(employeeId, pageable));
+    }
 }

@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.YearMonth;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,17 +33,42 @@ class WorklogControllerTest {
     @InjectMocks
     private WorklogController worklogController;
 
+    private LocalDateTime testCreatedAt;
+    private LocalDateTime testUpdatedAt;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        testCreatedAt = LocalDateTime.now().minusDays(1);
+        testUpdatedAt = LocalDateTime.now();
     }
 
     @Test
     void getAllWorklogs() {
         // Arrange
         List<WorklogResponseDto> worklogs = Arrays.asList(
-            new WorklogResponseDto(1L, 1L, "John Doe", YearMonth.of(2025,5), 1L, "Type 1", 8),
-            new WorklogResponseDto(2L, 2L, "Jane Smith", YearMonth.of(2025,5), 2L, "Type 2", 8)
+            WorklogResponseDto.builder()
+                .id(1L)
+                .employeeId(1L)
+                .employeeName("John Doe")
+                .monthDate(YearMonth.of(2025,5))
+                .worklogTypeId(1L)
+                .worklogTypeName("Type 1")
+                .effort(8)
+                .createdAt(testCreatedAt)
+                .updatedAt(testUpdatedAt)
+                .build(),
+            WorklogResponseDto.builder()
+                .id(2L)
+                .employeeId(2L)
+                .employeeName("Jane Smith")
+                .monthDate(YearMonth.of(2025,5))
+                .worklogTypeId(2L)
+                .worklogTypeName("Type 2")
+                .effort(8)
+                .createdAt(testCreatedAt)
+                .updatedAt(testUpdatedAt)
+                .build()
         );
         Page<WorklogResponseDto> worklogPage = new PageImpl<>(worklogs);
         when(worklogService.getAllWorklogs(any(Pageable.class))).thenReturn(worklogPage);
@@ -75,7 +101,17 @@ class WorklogControllerTest {
     void getWorklogById() {
         // Arrange
         Long worklogId = 1L;
-        WorklogResponseDto worklog = new WorklogResponseDto(worklogId, 1L, "John Doe", YearMonth.of(2025,5), 1L, "Type 1", 8);
+        WorklogResponseDto worklog = WorklogResponseDto.builder()
+            .id(worklogId)
+            .employeeId(1L)
+            .employeeName("John Doe")
+            .monthDate(YearMonth.of(2025,5))
+            .worklogTypeId(1L)
+            .worklogTypeName("Type 1")
+            .effort(8)
+            .createdAt(testCreatedAt)
+            .updatedAt(testUpdatedAt)
+            .build();
         when(worklogService.getWorklogById(worklogId)).thenReturn(worklog);
 
         // Act
@@ -110,7 +146,17 @@ class WorklogControllerTest {
         createDto.setEffort(8);
         createDto.setMonthDate(YearMonth.of(2025, 5));
 
-        WorklogResponseDto createdWorklog = new WorklogResponseDto(1L, 1L, "John Doe", YearMonth.of(2025,5), 1L, "Type 1", 8);
+        WorklogResponseDto createdWorklog = WorklogResponseDto.builder()
+            .id(1L)
+            .employeeId(1L)
+            .employeeName("John Doe")
+            .monthDate(YearMonth.of(2025,5))
+            .worklogTypeId(1L)
+            .worklogTypeName("Type 1")
+            .effort(8)
+            .createdAt(testCreatedAt)
+            .updatedAt(testUpdatedAt)
+            .build();
         when(worklogService.createWorklog(any(CreateWorklogDto.class))).thenReturn(createdWorklog);
 
         // Act
@@ -154,7 +200,17 @@ class WorklogControllerTest {
         updateDto.setEffort(9);
         updateDto.setMonthDate(YearMonth.of(2025, 6));
 
-        WorklogResponseDto updatedWorklog = new WorklogResponseDto(worklogId, 1L, "John Doe", YearMonth.of(2025,6), 1L, "Type 1", 9);
+        WorklogResponseDto updatedWorklog = WorklogResponseDto.builder()
+            .id(worklogId)
+            .employeeId(1L)
+            .employeeName("John Doe")
+            .monthDate(YearMonth.of(2025,6))
+            .worklogTypeId(1L)
+            .worklogTypeName("Type 1")
+            .effort(9)
+            .createdAt(testCreatedAt)
+            .updatedAt(testUpdatedAt)
+            .build();
         when(worklogService.updateWorklog(eq(worklogId), any(UpdateWorklogDto.class))).thenReturn(updatedWorklog);
 
         // Act
@@ -219,5 +275,63 @@ class WorklogControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
         assertEquals("Worklog not found", exception.getReason());
         verify(worklogService).deleteWorklog(worklogId);
+    }
+
+    @Test
+    void getWorklogsByEmployee() {
+        // Arrange
+        Long employeeId = 1L;
+        List<WorklogResponseDto> worklogs = Arrays.asList(
+            WorklogResponseDto.builder()
+                .id(1L)
+                .employeeId(employeeId)
+                .employeeName("John Doe")
+                .monthDate(YearMonth.of(2025,5))
+                .worklogTypeId(1L)
+                .worklogTypeName("Type 1")
+                .effort(8)
+                .createdAt(testCreatedAt)
+                .updatedAt(testUpdatedAt)
+                .build(),
+            WorklogResponseDto.builder()
+                .id(2L)
+                .employeeId(employeeId)
+                .employeeName("John Doe")
+                .monthDate(YearMonth.of(2025,6))
+                .worklogTypeId(2L)
+                .worklogTypeName("Type 2")
+                .effort(8)
+                .createdAt(testCreatedAt)
+                .updatedAt(testUpdatedAt)
+                .build()
+        );
+        Page<WorklogResponseDto> worklogPage = new PageImpl<>(worklogs);
+        when(worklogService.getWorklogsByEmployee(eq(employeeId), any(Pageable.class))).thenReturn(worklogPage);
+
+        // Act
+        ResponseEntity<Page<WorklogResponseDto>> response = worklogController.getWorklogsByEmployee(
+            employeeId, 0, 10, "id", "asc");
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(worklogPage, response.getBody());
+        verify(worklogService).getWorklogsByEmployee(eq(employeeId), any(Pageable.class));
+    }
+
+    @Test
+    void getWorklogsByEmployee_EmptyList() {
+        // Arrange
+        Long employeeId = 1L;
+        Page<WorklogResponseDto> emptyPage = new PageImpl<>(List.of());
+        when(worklogService.getWorklogsByEmployee(eq(employeeId), any(Pageable.class))).thenReturn(emptyPage);
+
+        // Act
+        ResponseEntity<Page<WorklogResponseDto>> response = worklogController.getWorklogsByEmployee(
+            employeeId, 0, 10, "id", "asc");
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertTrue(response.getBody().getContent().isEmpty());
+        verify(worklogService).getWorklogsByEmployee(eq(employeeId), any(Pageable.class));
     }
 }

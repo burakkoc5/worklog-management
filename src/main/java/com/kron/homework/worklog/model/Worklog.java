@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.YearMonth;
+import java.time.LocalDateTime;
 
 import com.kron.homework.worklog.converter.YearMonthAttributeConverter;
 
@@ -39,4 +40,21 @@ public class Worklog {
     @Min(value = 0, message = "Effort must be a positive number")
     @Column(nullable = false)
     private Integer effort;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }

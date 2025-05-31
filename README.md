@@ -192,6 +192,17 @@ Base URL: `/api/worklogs`
    - **Path Variable:** `id` (Long)
    - **Response:** No content (204)
 
+6. **Get Worklogs by Employee**
+   - **Method:** GET
+   - **URL:** `/api/worklogs/employee/{employeeId}`
+   - **Path Variable:** `employeeId` (Long)
+   - **Query Parameters:**
+     - `page` (optional, default: 0): Page number
+     - `size` (optional, default: 10): Number of items per page
+     - `sortBy` (optional, default: "id"): Field to sort by
+     - `sortDirection` (optional, default: "asc"): Sort direction ("asc" or "desc")
+   - **Response:** Page of WorklogResponseDto
+
 ### Worklog Type Controller
 
 Base URL: `/api/worklog-types`
